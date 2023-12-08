@@ -1,3 +1,4 @@
+from text_to_array import text_to_float_array
 import numpy as np
 import statistics
 
@@ -9,14 +10,6 @@ def central_tendency(data):
         'median': np.median(data),
         'mode': statistics.multimode(data)
     }
-    return result
-
-
-def sum_of_x(data: list[int | float], exponent=1, m=0):
-    result = 0
-    for x in data:
-        result += (x - m) ** exponent
-
     return result
 
 
@@ -64,52 +57,63 @@ def measure_of_dispersion(data):
         'population variance': np.var(data)
     }
     result['sample standard deviation'] = np.sqrt(result['sample variance'])
-    result['population standard deviation'] = np.sqrt(result['population variance'])
-    result['cofficient of variation'] = (result['sample standard deviation'] / np.mean(data)) * 100
+    result['population standard deviation'] = np.sqrt(
+        result['population variance'])
+    result['cofficient of variation'] = (
+        result['sample standard deviation'] / np.mean(data)) * 100
     return result
 
 
-def population_skewness(data):
-    result = {}
+def skew(data):
+    result = {'sk1': {}}
     modes = statistics.multimode(data)
-    result['sk1'] = {}
+    stddev = np.sqrt(np.var(data, ddof=1))
+    mean = np.mean(data)
 
     for mode in modes:
-        result['sk1'][mode] = (np.mean(data) - mode) / np.sqrt(np.var(data))
-    
-    result['sk2'] = (3 * np.mean(data) - np.median(data)) / np.sqrt(np.var(data))
+        result['sk1'][mode] = (mean - mode) / stddev
+
+    result['sk2'] = (3 * (mean - np.median(data))) / stddev
     return result
 
 
-def population_kurtosis(data):
-    result = {}
+def kurt(data):
+    data = np.array(data)
     mean = np.mean(data)
-    stddev = np.sqrt(np.var(data))
     N = len(data)
-    result['kurt2'] = (1 / N) * (sum_of_x(data, exponent=4, m=mean) / stddev ** 4)
+    result = {}
+    m2 = (N * np.sum(data ** 2) - np.sum(data) ** 2) / N ** 2
+    m4 = (np.sum(data ** 4) / N) - 4 * mean * (np.sum(data ** 3) / N) + 6 * mean ** 2 * (np.sum(data ** 2) / N) - 3 * mean ** 4
+    result['kurt1'] = m4 / m2 ** 2
+    result['kurt2'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * (result['kurt1'] - ((3 * (N - 1) / (N + 1))))
     return result
 
 
 def population_moment(data):
+    data = np.array(data)
     result = {}
     mean = np.mean(data)
     stddev = np.sqrt(np.var(data))
     N = len(data)
+    sum2 = np.sum((data - mean) ** 2)
+    sum3 = np.sum((data - mean) ** 3)
+    sum4 = np.sum((data - mean) ** 4)
+
     result['raw'] = {
         'm1': mean,
-        'm2': sum_of_x(data, exponent=2) / N,
-        'm3': sum_of_x(data, exponent=3) / N,
-        'm4': sum_of_x(data, exponent=4) / N
+        'm2': np.sum(data ** 2) / N,
+        'm3': np.sum(data ** 3) / N,
+        'm4': np.sum(data ** 4) / N
     }
     result['central'] = {
-        'm2': sum_of_x(data, exponent=2, m=mean) / N,
-        'm3': sum_of_x(data, exponent=3, m=mean) / N,
-        'm4': sum_of_x(data, exponent=4, m=mean) / N
+        'm2': sum2 / N,
+        'm3': sum3 / N,
+        'm4': sum4 / N
     }
     result['standard'] = {
         'm2': result['central']['m2'],
-        'm3': (1 / N) * (sum_of_x(data, exponent=3, m=mean) / stddev ** 3),
-        'm4': (1 / N) * (sum_of_x(data, exponent=4, m=mean) / stddev ** 4)
+        'm3': (1 / N) * (sum3 / stddev ** 3),
+        'm4': (1 / N) * (sum4 / stddev ** 4)
     }
     # (m2) Second standardised moment
     result['var'] = result['standard']['m2']
@@ -121,16 +125,19 @@ def population_moment(data):
 
 
 def sample_moment(data):
+    data = np.array(data)
     mean = np.mean(data)
     stddev = np.sqrt(np.var(data, ddof=1))
     N = len(data)
     result = population_moment(data)
+
     left = ((N * (N + 1)) / ((N - 1) * (N - 2) * (N - 3)))
-    central = (sum_of_x(data, exponent=4, m=mean) / stddev ** 4)
+    central = (np.sum((data - mean) ** 4) / stddev ** 4)
     right = (3 * (N - 1) ** 2) / ((N - 2) * (N - 3))
+
     result['standard'] = {
-        'm2': sum_of_x(data, exponent=2, m=mean) / (N - 1),
-        'm3': (N / ((N - 1) * (N - 2))) * (sum_of_x(data, exponent=3, m=mean) / stddev ** 3),
+        'm2': np.sum(data ** 2 - mean) / (N - 1),
+        'm3': (N / ((N - 1) * (N - 2))) * (np.sum((data - mean) ** 3) / stddev ** 3),
         'm4': left * central - right
     }
     # (m2) Second centralised moment
@@ -140,28 +147,3 @@ def sample_moment(data):
     # (m4) Fourth standardised moment
     result['kurt'] = result['standard']['m4']
     return result
-
-
-def skewness(data):
-    result = {}
-    modes = statistics.multimode(data)
-    result['sk1'] = {}
-
-    for mode in modes:
-        result['sk1'][mode] = (np.mean(data) - mode) / np.sqrt(np.var(data, ddof=1))
-
-    result['sk2'] = (3 * (np.mean(data) - np.median(data))) / np.sqrt(np.var(data, ddof=1))
-    return result
-
-
-def kurt(data):
-    mean = np.mean(data)
-    N = len(data)
-    result = {}
-    m2 = (N * sum_of_x(data, exponent=2) - sum_of_x(data) ** 2) / N ** 2
-    m4 = (sum_of_x(data, exponent=4) / N) - 4 * mean * (sum_of_x(data, exponent=3) / N) + 6 * mean ** 2 * (sum_of_x(data, exponent=2) / N) - 3 * mean ** 4
-    result['kurt1'] = m4 / m2 ** 2
-    result['kurt2'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * (result['kurt1'] - ((3 * (N - 1) / (N + 1))))
-    return result
-
-
