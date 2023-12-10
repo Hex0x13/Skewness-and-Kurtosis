@@ -1,4 +1,4 @@
-from text_to_array import text_to_float_array
+from text_to_array import textfile_to_farray
 import numpy as np
 import statistics
 
@@ -78,19 +78,19 @@ def skew(data):
 
 
 def kurt(data):
-    data = np.array(data)
     mean = np.mean(data)
     N = len(data)
     result = {}
     m2 = (N * np.sum(data ** 2) - np.sum(data) ** 2) / N ** 2
-    m4 = (np.sum(data ** 4) / N) - 4 * mean * (np.sum(data ** 3) / N) + 6 * mean ** 2 * (np.sum(data ** 2) / N) - 3 * mean ** 4
+    m4 = (np.sum(data ** 4) / N) - 4 * mean * (np.sum(data ** 3) / N) + \
+        6 * mean ** 2 * (np.sum(data ** 2) / N) - 3 * mean ** 4
     result['kurt1'] = m4 / m2 ** 2
-    result['kurt2'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * (result['kurt1'] - ((3 * (N - 1) / (N + 1))))
+    result['kurt2'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * \
+        (result['kurt1'] - ((3 * (N - 1) / (N + 1))))
     return result
 
 
 def population_moment(data):
-    data = np.array(data)
     result = {}
     mean = np.mean(data)
     stddev = np.sqrt(np.var(data))
@@ -125,7 +125,6 @@ def population_moment(data):
 
 
 def sample_moment(data):
-    data = np.array(data)
     mean = np.mean(data)
     stddev = np.sqrt(np.var(data, ddof=1))
     N = len(data)

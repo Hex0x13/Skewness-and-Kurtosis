@@ -1,5 +1,5 @@
 
-def text_to_float_array(path):
+def textfile_to_farray(path):
     data: str = None
     array = []
     try:
@@ -17,12 +17,57 @@ def text_to_float_array(path):
             elif number and number != '-':
                 array.append(float(number))
                 number = ''
-        
+
         if number and number != '-':
-            print(number)
             array.append(float(number))
-        
+
     except Exception as err:
         print(err)
 
     return array
+
+
+def sanitize_input(text: str):
+    result = ''
+
+    number = ''
+    for char in text:
+        if char.isdigit():
+            number += char
+        elif (number and char == '.') and (number[-1] != '-' and number[-1] != '.'):
+            number += char
+        elif not number and char == '-':
+            number += char
+        elif number and number != '-':
+            result += f'{number}, '
+            number = ''
+
+    if number and number != '-':
+        result += f'{number}'
+
+    return result
+
+
+def valid_input(text: str):
+    text = text.strip(' ').rstrip(',')
+    array = text.split(',')
+
+    for item in array:
+        tmp = item.strip()
+        if tmp and tmp[0] == '-':
+            tmp = tmp[1:]
+
+        if not tmp.isdigit():
+            return False
+
+    return True
+
+
+def text_to_float_array(text: str):
+    try:
+        array = text.strip(',').rstrip(', \n')
+        array = array.split(',')
+        return [float(x.strip()) for x in array]
+    except Exception as err:
+        print(err)
+        return None
