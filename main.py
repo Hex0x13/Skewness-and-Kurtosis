@@ -1,52 +1,46 @@
+from typing import Optional, Tuple, Union
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
 from screenmanager import ScreenManager
-from header import header_section
-from data import data_section
+import matplotlib.pyplot as plt
+from header import HeaderSection
+from data import DataScreen
 from result import *
 
 
-def main():
-    root = ctk.CTk()
-    root.geometry('860x600')
+class App(ctk.CTk):
+    def __init__(self, fg_color: str | Tuple[str, str] | None = None, **kwargs):
+        super().__init__(fg_color, **kwargs)
+        self.geometry('860x600')
 
-    pack_screen = {
-        'expand': True,
-        'fill': 'both'
-    }
-    screenmanager = ScreenManager()
-    header = header_section(root, screenmanager)
-    header.pack()
+        pack_screen = {
+            'expand': True,
+            'fill': 'both'
+        }
 
-    data_frame, result_btn, textbox = data_section(root)
-    result_frame = result_section(root)
-    formula_frame = formula_section(root)
+        self.screenmanager = ScreenManager()
+        self.header = HeaderSection(self, self.screenmanager)
+        self.header.pack()
 
-    screenmanager.add_screen('data_screen', data_frame, **pack_screen)
-    screenmanager.add_screen('result_screen', result_frame, **pack_screen)
-    screenmanager.add_screen('formula_screen', formula_frame, **pack_screen)
+        self.data_frame = DataScreen(self)
+        self.result_frame = ResultScreen(self)
+        self.formula_frame = FormulaScreen(self)
 
-    screenmanager.set_current('data_screen')
-    result_btn.configure(command=lambda: generate_result(result_frame, textbox))
+        self.screenmanager.add_screen('data_screen', self.data_frame, **pack_screen)
+        self.screenmanager.add_screen('result_screen', self.result_frame, **pack_screen)
+        self.screenmanager.add_screen('formula_screen', self.formula_frame, **pack_screen)
 
-    root.mainloop()
-
+        self.screenmanager.set_current('data_screen')
+        self.data_frame.result_btn.configure(command=lambda: generate_result(self.result_frame, self.data_frame.textbox))
+    
+    def close(self):
+        if self.result_frame.histfigure:
+            plt.close(self.result_frame.histfigure)
+        self.destroy()
+        self.quit()
+        
 
 if __name__ == '__main__':
-    main()
-
-
-
-# from solution import *
-# from text_to_array import textfile_to_farray, sanitize_input
-
-# if __name__ == '__main__':
-#     data1 = np.array(textfile_to_farray('./dataset1'))
-#     print(*[f'{k}: {v}' for k, v in central_tendency(data1).items()], sep='\n')
-#     print(*[f'{k}: {v}' for k, v in measure_of_location(data1).items()], sep='\n')
-#     print(*[f'{k}: {v}' for k, v in measure_of_dispersion(data1).items()], sep='\n')
-#     print(*[f'{k}: {v}' for k, v in skew(data1).items()], sep='\n')
-#     print(*[f'{k}: {v}' for k, v in kurt(data1).items()], sep='\n')
-#     smaple_m = sample_moment(data1)
-#     print("Skew:", smaple_m['skew'])
-#     print("Kurt:", smaple_m['kurt'])
+    app = App()
+    app.protocol("WN_DELETE_WINDOW",app.close)
+    app.mainloop()

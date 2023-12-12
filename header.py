@@ -1,3 +1,4 @@
+from typing import Optional, Tuple, Union
 from screenmanager import ScreenManager
 import customtkinter as ctk
 
@@ -11,16 +12,16 @@ def change_screen(value, screenmanager):
         screenmanager.set_current('formula_screen')
 
 
-def header_section(root, screenmanager: ScreenManager, **kwargs):
-    header_frame = ctk.CTkFrame(root, **kwargs)
-    screen_opt = ['data', 'result', 'formula']
 
-    segemented_button = ctk.CTkSegmentedButton(
-        header_frame,
-        values=screen_opt,
-        command=lambda value: change_screen(value, screenmanager=screenmanager)
-    )
-    segemented_button.set(screen_opt[0])
-    segemented_button.pack()
+class HeaderSection(ctk.CTkFrame):
+    def __init__(self, master: any, screenmanager: ScreenManager, width: int = 200, height: int = 200, corner_radius: int | str | None = None, border_width: int | str | None = None, bg_color: str | Tuple[str, str] = "transparent", fg_color: str | Tuple[str, str] | None = None, border_color: str | Tuple[str, str] | None = None, background_corner_colors: Tuple[str | Tuple[str, str]] | None = None, overwrite_preferred_drawing_method: str | None = None, **kwargs):
+        super().__init__(master, width, height, corner_radius, border_width, bg_color, fg_color, border_color, background_corner_colors, overwrite_preferred_drawing_method, **kwargs)
+        self.screen_opt = ['data', 'result', 'formula']
 
-    return header_frame
+        self.segemented_button = ctk.CTkSegmentedButton(
+            self,
+            values=self.screen_opt,
+            command=lambda value: change_screen(value, screenmanager=screenmanager)
+        )
+        self.segemented_button.set(self.screen_opt[0])
+        self.segemented_button.pack()
