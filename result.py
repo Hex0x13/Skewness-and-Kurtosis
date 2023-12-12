@@ -14,6 +14,11 @@ class ResultScreen(ctk.CTkFrame):
         self.inner_frame = ctk.CTkLabel(self, text='No Result')
         self.inner_frame.pack(expand=True)
         self.histfigure = None
+    
+    def set_innerframe_to_default(self):
+        self.inner_frame.destroy()
+        self.inner_frame = ctk.CTkLabel(self, text='No Result')
+        self.inner_frame.pack(expand=True, fill='both')
 
 
 class FormulaScreen(ctk.CTkFrame):
@@ -28,7 +33,9 @@ def generate_result(root):
     data = text_to_float_array(text)
 
     if text and data:
-        if isinstance(root.result_frame.inner_frame, ctk.CTkLabel):
+        if root.result_frame.inner_frame:
+            if root.result_frame.histfigure:
+                plt.close(root.result_frame.histfigure)
             root.result_frame.inner_frame.destroy()
             root.result_frame.inner_frame = ctk.CTkFrame(root.result_frame)
             root.result_frame.inner_frame.pack(expand=True, fill='both')
@@ -45,5 +52,7 @@ def generate_result(root):
         canvas.get_tk_widget().pack(expand=True)
     elif not text:
         CTkMessagebox(root, title='Warning', message='Textbox is Empty!')
+        root.result_frame.set_innerframe_to_default()
     else:
         CTkMessagebox(root, title='Warning', message='Invalid Input!')
+        root.result_frame.set_innerframe_to_default()

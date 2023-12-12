@@ -20,7 +20,7 @@ class App(ctk.CTk):
 
         self.screenmanager = ScreenManager()
         self.header = HeaderSection(self, self.screenmanager)
-        self.header.pack()
+        self.header.pack(pady=10)
 
         self.data_frame = DataScreen(self)
         self.result_frame = ResultScreen(self)
