@@ -1,5 +1,6 @@
-from typing import Optional, Tuple, Union
+from typing import Tuple
 import customtkinter as ctk
+from CTkMessagebox import CTkMessagebox
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -22,20 +23,27 @@ class FormulaScreen(ctk.CTkFrame):
         self.inner_frame.pack(expand=True)
 
 
-def generate_result(result_frame: ResultScreen, textbox: ctk.CTkTextbox):
-    if isinstance(result_frame.inner_frame, ctk.CTkLabel):
-        result_frame.inner_frame.destroy()
-        result_frame.inner_frame = ctk.CTkFrame(result_frame)
-        result_frame.inner_frame.pack(expand=True, fill='both')
+def generate_result(root):
+    text = root.data_frame.textbox.get('1.0', 'end').strip(' \n\t')
+    data = text_to_float_array(text)
 
-    data = np.array(sorted(text_to_float_array(textbox.get('1.0', 'end'))))
-    
-    result_frame.histfigure, ax = plt.subplots()
-    sns.histplot(data, kde=True, ax=ax)
-    ax.set_title("Skewness & Kurtosis")
-    ax.set_ylabel("Frequency")
-    ax.set_xlabel("Values")
+    if text and data:
+        if isinstance(root.result_frame.inner_frame, ctk.CTkLabel):
+            root.result_frame.inner_frame.destroy()
+            root.result_frame.inner_frame = ctk.CTkFrame(root.result_frame)
+            root.result_frame.inner_frame.pack(expand=True, fill='both')
 
-    canvas = FigureCanvasTkAgg(result_frame.histfigure, master=result_frame.inner_frame)
-    canvas.draw()
-    canvas.get_tk_widget().pack(expand=True)
+        data = np.array(data)
+        root.result_frame.histfigure, ax = plt.subplots()
+        sns.histplot(data, kde=True, ax=ax)
+        ax.set_title("Skewness & Kurtosis")
+        ax.set_ylabel("Frequency")
+        ax.set_xlabel("Values")
+
+        canvas = FigureCanvasTkAgg(root.result_frame.histfigure, master=root.result_frame.inner_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(expand=True)
+    elif not text:
+        CTkMessagebox(root, title='Warning', message='Textbox is Empty!')
+    else:
+        CTkMessagebox(root, title='Warning', message='Invalid Input!')

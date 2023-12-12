@@ -31,7 +31,7 @@ class App(ctk.CTk):
         self.screenmanager.add_screen('formula_screen', self.formula_frame, **pack_screen)
 
         self.screenmanager.set_current('data_screen')
-        self.data_frame.result_btn.configure(command=lambda: generate_result(self.result_frame, self.data_frame.textbox))
+        self.data_frame.result_btn.configure(command=lambda: generate_result(self))
     
     def close(self):
         if self.result_frame.histfigure:
@@ -42,5 +42,5 @@ class App(ctk.CTk):
 
 if __name__ == '__main__':
     app = App()
-    app.protocol("WN_DELETE_WINDOW",app.close)
+    app.protocol("WM_DELETE_WINDOW",app.close)
     app.mainloop()

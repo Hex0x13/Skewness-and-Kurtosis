@@ -68,6 +68,5 @@ def text_to_float_array(text: str):
         array = text.strip(',').rstrip(', \n')
         array = array.split(',')
         return [float(x.strip()) for x in array]
-    except Exception as err:
-        print(err)
+    except Exception:
         return None

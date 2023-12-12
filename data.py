@@ -22,6 +22,7 @@ class DataScreen(ctk.CTkFrame):
             'height': 50,
         }
 
+        # Container for textbox and textbox label
         self.input_frame = ctk.CTkFrame(self, width=600, fg_color='transparent')
         self.input_frame.pack(expand=True)
 
@@ -32,8 +33,12 @@ class DataScreen(ctk.CTkFrame):
         self.input_label = ctk.CTkLabel(self.input_frame, text='comma separated input values')
         self.input_label.pack(anchor=ctk.E, padx=(0, 10))
 
+        # Container for buttons
         self.button_frame = ctk.CTkFrame(self.input_frame, **button_frame_style)
         self.button_frame.pack(fill='x')
+
+        self.clear_btn = ctk.CTkButton(self.button_frame, text='Clear')
+        self.clear_btn.pack(side=ctk.LEFT)
 
         self.result_btn = ctk.CTkButton(self.button_frame, text='Generate Result')
         self.result_btn.pack(side=ctk.RIGHT, padx=10, pady=10)
