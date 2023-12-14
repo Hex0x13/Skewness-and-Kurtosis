@@ -69,11 +69,22 @@ def skew(data):
     modes = statistics.multimode(data)
     stddev = np.sqrt(np.var(data, ddof=1))
     mean = np.mean(data)
+    N = len(data)
 
     for mode in modes:
         result['sk1'][mode] = (mean - mode) / stddev
 
     result['sk2'] = (3 * (mean - np.median(data))) / stddev
+    result['moment-base'] = (N / ((N - 1) * (N - 2))) * (np.sum((data - mean) ** 3) / stddev ** 3)
+
+    if result['moment-base'] == 0:
+        result['info'] = 'Symmentric Distribution'
+    elif result['moment-base'] < 0:
+        result['info'] = 'Negatively Skewed Distribution'
+        result['info2'] = 'Skewed to the left'
+    elif result['moment-base'] > 0:
+        result['info'] = 'Possitively Skewed Distribution'
+        result['info2'] = 'Skewed to the right'
     return result
 
 
@@ -82,11 +93,15 @@ def kurt(data):
     N = len(data)
     result = {}
     m2 = (N * np.sum(data ** 2) - np.sum(data) ** 2) / N ** 2
-    m4 = (np.sum(data ** 4) / N) - 4 * mean * (np.sum(data ** 3) / N) + \
-        6 * mean ** 2 * (np.sum(data ** 2) / N) - 3 * mean ** 4
+    m4 = (np.sum(data ** 4) / N) - 4 * mean * (np.sum(data ** 3) / N) + 6 * mean ** 2 * (np.sum(data ** 2) / N) - 3 * mean ** 4
     result['kurt1'] = m4 / m2 ** 2
-    result['kurt2'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * \
-        (result['kurt1'] - ((3 * (N - 1) / (N + 1))))
+    result['kurt2'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * (result['kurt1'] - ((3 * (N - 1) / (N + 1))))
+    if result['kurt1'] < 3 or result['kurt2'] < 0:
+        result['interpretation'] = 'platykurtic'
+    elif result['kurt1'] > 3 or result['kurt2'] > 0:
+        result['interpretation'] = 'leptokurtic'
+    elif result['kurt1'] == 3 or result['kurt2'] == 0:
+        result['interpretation'] = 'mesokurtic'
     return result
 
 

@@ -23,12 +23,11 @@ class DataScreen(ctk.CTkFrame):
         }
 
         # Container for textbox and textbox label
-        self.input_frame = ctk.CTkFrame(self, width=600, fg_color='transparent')
+        self.input_frame = ctk.CTkFrame(self, fg_color='transparent')
         self.input_frame.pack(expand=True)
 
         self.textbox = ctk.CTkTextbox(self.input_frame, **textbox_style)
         self.textbox.pack(expand=True)
-        self.textbox.pack_propagate(False)
 
         self.input_label = ctk.CTkLabel(self.input_frame, text='comma separated input values')
         self.input_label.pack(anchor=ctk.E, padx=(0, 10))

@@ -25,6 +25,7 @@ class App(ctk.CTk):
         self.result_frame.pack(**pack_screen)
 
         self.data_frame.result_btn.configure(command=lambda: generate_result(self))
+        self.data_frame.clear_btn.configure(command=lambda: clear_input(self))
     
     def resize(self, event):
         width = event.width // 2

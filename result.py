@@ -12,10 +12,12 @@ class ResultScreen(ctk.CTkFrame):
     def __init__(self, master: any, width: int = 200, height: int = 200, corner_radius: int | str | None = None, border_width: int | str | None = None, bg_color: str | Tuple[str, str] = "transparent", fg_color: str | Tuple[str, str] | None = None, border_color: str | Tuple[str, str] | None = None, background_corner_colors: Tuple[str | Tuple[str, str]] | None = None, overwrite_preferred_drawing_method: str | None = None, **kwargs):
         super().__init__(master, width, height, corner_radius, border_width, bg_color, fg_color, border_color, background_corner_colors, overwrite_preferred_drawing_method, **kwargs)
         self.inner_frame = ctk.CTkLabel(self, text='No Result')
-        self.inner_frame.pack(expand=True)
+        self.inner_frame.pack(expand=True, fill='both')
         self.histfigure = None
     
     def set_innerframe_to_default(self):
+        if self.histfigure:
+            plt.close(self.histfigure)
         self.inner_frame.destroy()
         self.inner_frame = ctk.CTkLabel(self, text='No Result')
         self.inner_frame.pack(expand=True, fill='both')
@@ -43,9 +45,24 @@ def generate_result(root):
         canvas = FigureCanvasTkAgg(root.result_frame.histfigure, master=root.result_frame.inner_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(expand=True)
+
+        skewness = skew(data)
+        kurtosis = kurt(data)
+
+        for k, v in skewness.items():
+            ctk.CTkLabel(root.result_frame.inner_frame, text=f'{k}: {v}').pack()
+
+        for k, v in kurtosis.items():
+            ctk.CTkLabel(root.result_frame.inner_frame, text=f'{k}: {v}').pack()
+
     elif not text:
         CTkMessagebox(root, title='Warning', message='Textbox is Empty!')
         root.result_frame.set_innerframe_to_default()
     else:
         CTkMessagebox(root, title='Warning', message='Invalid Input!')
         root.result_frame.set_innerframe_to_default()
+
+
+def clear_input(root):
+    root.data_frame.textbox.delete('1.0', 'end')
+    root.result_frame.set_innerframe_to_default()
