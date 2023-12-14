@@ -86,12 +86,12 @@ def skew(data):
     elif result['moment-base'] > 0:
         result['interpretation'] = 'Possitively Skewed Distribution\n(Skewed to the right)'
     
-    if result['moment-base'] >= -0.5 and result['moment-base'] <= 0.5:
+    if result['moment-base'] == 0:
+        result['degree of skewness'] = 'Symmetric'
+    elif result['moment-base'] >= -0.5 and result['moment-base'] <= 0.5:
         result['degree of skewness'] = 'Approximately Symmetric'
     elif result['moment-base'] >= -1.0 and result['moment-base'] <= 1.0:
         result['degree of skewness'] = 'Moderately Skewed'
-    elif result['moment-base'] == 0:
-        result['degree of skewness'] = 'Symmetric'
     else:
         result['degree of skewness'] = 'Highly Skewed'
 
