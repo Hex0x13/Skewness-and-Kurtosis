@@ -26,11 +26,6 @@ class App(ctk.CTk):
 
         self.data_frame.result_btn.configure(command=lambda: generate_result(self))
         self.data_frame.clear_btn.configure(command=lambda: clear_input(self))
-    
-    def resize(self, event):
-        width = event.width // 2
-        self.data_frame.configure(width=width)
-        self.result_frame.configure(width=width)
 
     def close(self):
         if self.result_frame.histfigure:
