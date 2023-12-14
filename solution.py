@@ -67,6 +67,8 @@ def measure_of_dispersion(data):
 def skew(data):
     result = {'sk1': {}}
     modes = statistics.multimode(data)
+    if len(modes) == len(set(data)):
+        modes = []
     stddev = np.sqrt(np.var(data, ddof=1))
     mean = np.mean(data)
     N = len(data)
@@ -78,13 +80,21 @@ def skew(data):
     result['moment-base'] = (N / ((N - 1) * (N - 2))) * (np.sum((data - mean) ** 3) / stddev ** 3)
 
     if result['moment-base'] == 0:
-        result['info'] = 'Symmentric Distribution'
+        result['interpretation'] = 'Symmentric Distribution'
     elif result['moment-base'] < 0:
-        result['info'] = 'Negatively Skewed Distribution'
-        result['info2'] = 'Skewed to the left'
+        result['interpretation'] = 'Negatively Skewed Distribution\n(Skewed to the left)'
     elif result['moment-base'] > 0:
-        result['info'] = 'Possitively Skewed Distribution'
-        result['info2'] = 'Skewed to the right'
+        result['interpretation'] = 'Possitively Skewed Distribution\n(Skewed to the right)'
+    
+    if result['moment-base'] >= -0.5 and result['moment-base'] <= 0.5:
+        result['degree of skewness'] = 'Approximately Symmetric'
+    elif result['moment-base'] >= -1.0 and result['moment-base'] <= 1.0:
+        result['degree of skewness'] = 'Moderately Skewed'
+    elif result['moment-base'] == 0:
+        result['degree of skewness'] = 'Symmetric'
+    else:
+        result['degree of skewness'] = 'Highly Skewed'
+
     return result
 
 
