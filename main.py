@@ -24,11 +24,9 @@ class App(ctk.CTk):
 
         self.data_frame = DataScreen(self)
         self.result_frame = ResultScreen(self)
-        self.formula_frame = FormulaScreen(self)
 
         self.screenmanager.add_screen('data_screen', self.data_frame, **pack_screen)
         self.screenmanager.add_screen('result_screen', self.result_frame, **pack_screen)
-        self.screenmanager.add_screen('formula_screen', self.formula_frame, **pack_screen)
 
         self.screenmanager.set_current('data_screen')
         self.data_frame.result_btn.configure(command=lambda: generate_result(self))

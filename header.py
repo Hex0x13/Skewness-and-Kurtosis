@@ -6,7 +6,7 @@ import customtkinter as ctk
 class HeaderSection(ctk.CTkFrame):
     def __init__(self, master: any, screenmanager: ScreenManager, width: int = 200, height: int = 200, corner_radius: int | str | None = None, border_width: int | str | None = None, bg_color: str | Tuple[str, str] = "transparent", fg_color: str | Tuple[str, str] | None = None, border_color: str | Tuple[str, str] | None = None, background_corner_colors: Tuple[str | Tuple[str, str]] | None = None, overwrite_preferred_drawing_method: str | None = None, **kwargs):
         super().__init__(master, width, height, corner_radius, border_width, bg_color, fg_color, border_color, background_corner_colors, overwrite_preferred_drawing_method, **kwargs)
-        self.screen_opt = ['Data', 'Result', 'Formula']
+        self.screen_opt = ['Data', 'Result']
         self.__screenmanager = screenmanager
 
         self.segemented_button = ctk.CTkSegmentedButton(
@@ -25,5 +25,3 @@ class HeaderSection(ctk.CTkFrame):
             self.__screenmanager.set_current('data_screen')
         elif value == self.screen_opt[1]:
             self.__screenmanager.set_current('result_screen')
-        elif value == self.screen_opt[2]:
-            self.__screenmanager.set_current('formula_screen')
