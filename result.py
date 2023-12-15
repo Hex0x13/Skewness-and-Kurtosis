@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from solution import *
 from text_to_array import text_to_float_array
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import time
 
 class ResultScreen(ctk.CTkScrollableFrame):
     def __init__(self, master: any, width: int = 200, height: int = 200, corner_radius: int | str | None = None, border_width: int | str | None = None, bg_color: str | Tuple[str, str] = "transparent", fg_color: str | Tuple[str, str] | None = None, border_color: str | Tuple[str, str] | None = None, background_corner_colors: Tuple[str | Tuple[str, str]] | None = None, overwrite_preferred_drawing_method: str | None = None, **kwargs):
@@ -22,10 +23,8 @@ class ResultScreen(ctk.CTkScrollableFrame):
     
     def __default_innerframe(self):
         self.inner_frame = ctk.CTkLabel(self, text='No Result', fg_color='transparent', font=ctk.CTkFont(size=18, weight='bold'))
-        self.inner_frame.grid(row=0, column=0, sticky='nsew')
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-
+        self.inner_frame.pack(expand=True, fill='both')
+    
 
 def generate_result(root):
     text = root.data_frame.textbox.get('1.0', 'end').strip(' \n\t')
@@ -37,7 +36,7 @@ def generate_result(root):
                 plt.close(root.result_frame.histfigure)
             root.result_frame.inner_frame.destroy()
             root.result_frame.inner_frame = ctk.CTkFrame(root.result_frame)
-            root.result_frame.inner_frame.pack(expand=True, fill='both', anchor=ctk.N)
+            root.result_frame.inner_frame.pack(expand=True, fill='both')
 
         data = np.array(data)
         root.result_frame.histfigure, ax = plt.subplots()
