@@ -1,6 +1,7 @@
 from text_to_array import textfile_to_farray
 import numpy as np
 import statistics
+import warnings
 
 
 def central_tendency(data):
@@ -66,53 +67,101 @@ def measure_of_dispersion(data):
 
 def skew(data):
     result = {'Sk₁': {}}
-    modes = statistics.multimode(data)
-    if len(modes) == len(set(data)):
-        modes = []
-    stddev = np.sqrt(np.var(data, ddof=1))
-    mean = np.mean(data)
-    N = len(data)
+    with warnings.catch_warnings():
+        warnings.filterwarnings('ignore', category=RuntimeWarning)
+        modes = statistics.multimode(data)
+        if len(modes) == len(set(data)):
+            modes = []
+        stddev = np.sqrt(np.var(data, ddof=1))
+        mean = np.mean(data)
+        N = len(data)
+        if not stddev or np.isnan(stddev) or np.isinf(stddev):
+            return {
+                'Sk₁': 'Zero Division Error',
+                'Sk₂': 'Zero Division Error',
+                'moment-based': 'Zero Division Error'
+            }
 
-    for mode in modes:
-        result['Sk₁'][mode] = (mean - mode) / stddev
+        for mode in modes:
+            result['Sk₁'][mode] = (mean - mode) / stddev
 
-    result['Sk₂'] = (3 * (mean - np.median(data))) / stddev
-    result['moment-based'] = (N / ((N - 1) * (N - 2))) * (np.sum((data - mean) ** 3) / stddev ** 3)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        try:
+            result['Sk₂'] = (3 * (mean - np.median(data))) / stddev
+        except (ZeroDivisionError, RuntimeWarning):
+            result['Sk₂'] = 'Zero Division Error'
 
-    if result['moment-based'] == 0:
-        result['interpretation'] = 'Symmentric Distribution'
-    elif result['moment-based'] < 0:
-        result['interpretation'] = 'Negatively Skewed Distribution (Skewed to the left)'
-    elif result['moment-based'] > 0:
-        result['interpretation'] = 'Possitively Skewed Distribution (Skewed to the right)'
-    
-    if result['moment-based'] == 0:
-        result['degree of skewness'] = 'Symmetric'
-    elif result['moment-based'] >= -0.5 and result['moment-based'] <= 0.5:
-        result['degree of skewness'] = 'Approximately Symmetric'
-    elif result['moment-based'] >= -1.0 and result['moment-based'] <= 1.0:
-        result['degree of skewness'] = 'Moderately Skewed'
-    else:
-        result['degree of skewness'] = 'Highly Skewed'
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        try:
+            result['moment-based'] = (N / ((N - 1) * (N - 2))) * \
+                (np.sum((data - mean) ** 3) / stddev ** 3)
+        except (ZeroDivisionError, RuntimeWarning):
+            result['moment-based'] = 'Zero Division Error'
+
+    skewness = None
+    if isinstance(result['moment-based'], float):
+        skewness = result['moment-based']
+    elif isinstance(result['Sk₂'], float):
+        skewness = result['Sk₂']
+    elif result['Sk₁']:
+        skewness = result['Sk₁'][list(result['Sk₁'].keys())[0]]
+
+    if skewness is not None:
+        if skewness == 0:
+            result['interpretation'] = 'Symmetric Distribution'
+        elif skewness < 0:
+            result['interpretation'] = 'Negatively Skewed Distribution (Skewed to the left)'
+        elif skewness > 0:
+            result['interpretation'] = 'Positively Skewed Distribution (Skewed to the right)'
+
+        if skewness == 0:
+            result['degree of skewness'] = 'Symmetric'
+        elif skewness >= -0.5 and skewness <= 0.5:
+            result['degree of skewness'] = 'Approximately Symmetric'
+        elif skewness >= -1.0 and skewness <= 1.0:
+            result['degree of skewness'] = 'Moderately Skewed'
+        elif skewness < -1.0 or skewness > 1.0:
+            result['degree of skewness'] = 'Highly Skewed'
 
     return result
 
 
 def kurt(data):
-    mean = np.mean(data)
-    N = len(data)
     result = {}
-    m2 = (N * np.sum(data ** 2) - np.sum(data) ** 2) / N ** 2
-    m4 = (np.sum(data ** 4) / N) - 4 * mean * (np.sum(data ** 3) / N) + 6 * mean ** 2 * (np.sum(data ** 2) / N) - 3 * mean ** 4
-    result['Kurt₁'] = m4 / m2 ** 2
-    result['Kurt₂'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * (result['Kurt₁'] - ((3 * (N - 1) / (N + 1))))
-    if result['Kurt₁'] < 3 or result['Kurt₂'] < 0:
-        result['interpretation'] = 'platykurtic'
-    elif result['Kurt₁'] > 3 or result['Kurt₂'] > 0:
-        result['interpretation'] = 'leptokurtic'
-    elif result['Kurt₁'] == 3 or result['Kurt₂'] == 0:
-        result['interpretation'] = 'mesokurtic'
-    return result
+    with warnings.catch_warnings():
+        warnings.filterwarnings("error")
+        try:
+            mean = np.mean(data)
+            N = len(data)
+            m2 = (N * np.sum(data ** 2) - np.sum(data) ** 2) / N ** 2
+            m4 = (np.sum(data ** 4) / N) - 4 * mean * (np.sum(data ** 3) /N) + 6 * mean ** 2 * (np.sum(data ** 2) / N) - 3 * mean ** 4
+
+            result['Kurt₁'] = m4 / m2 ** 2
+        except (ZeroDivisionError, RuntimeWarning):
+            return {'Kurt₁': 'Zero Division Error', 'Kurt₂': 'Zero Division Error'}
+
+        try:
+            result['Kurt₂'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * \
+                (result['Kurt₁'] - ((3 * (N - 1) / (N + 1))))
+
+            if result['Kurt₁'] < 3 or result['Kurt₂'] < 0:
+                result['interpretation'] = 'platykurtic'
+            elif result['Kurt₁'] > 3 or result['Kurt₂'] > 0:
+                result['interpretation'] = 'leptokurtic'
+            elif result['Kurt₁'] == 3 or result['Kurt₂'] == 0:
+                result['interpretation'] = 'mesokurtic'
+            return result
+        except (ZeroDivisionError, RuntimeWarning):
+            result['Kurt₂'] = 'Zero Division Error'
+            if result['Kurt₁'] < 3:
+                result['interpretation'] = 'platykurtic'
+            elif result['Kurt₁'] > 3:
+                result['interpretation'] = 'leptokurtic'
+            elif result['Kurt₁'] == 3:
+                result['interpretation'] = 'mesokurtic'
+            return result
 
 
 def population_moment(data):

@@ -11,16 +11,20 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 class ResultScreen(ctk.CTkScrollableFrame):
     def __init__(self, master: any, width: int = 200, height: int = 200, corner_radius: int | str | None = None, border_width: int | str | None = None, bg_color: str | Tuple[str, str] = "transparent", fg_color: str | Tuple[str, str] | None = None, border_color: str | Tuple[str, str] | None = None, background_corner_colors: Tuple[str | Tuple[str, str]] | None = None, overwrite_preferred_drawing_method: str | None = None, **kwargs):
         super().__init__(master, width, height, corner_radius, border_width, bg_color, fg_color, border_color, background_corner_colors, overwrite_preferred_drawing_method, **kwargs)
-        self.inner_frame = ctk.CTkLabel(self, text='No Result', fg_color='transparent', font=ctk.CTkFont(size=18, weight='bold'))
-        self.inner_frame.place(relx=0.5, rely=0.5)
+        self.__default_innerframe()
         self.histfigure = None
     
     def set_innerframe_to_default(self):
         if self.histfigure:
             plt.close(self.histfigure)
         self.inner_frame.destroy()
+        self.__default_innerframe()
+    
+    def __default_innerframe(self):
         self.inner_frame = ctk.CTkLabel(self, text='No Result', fg_color='transparent', font=ctk.CTkFont(size=18, weight='bold'))
-        self.inner_frame.place(relx=0.5, rely=0.5)
+        self.inner_frame.grid(row=0, column=0, sticky='nsew')
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
 
 def generate_result(root):
@@ -44,7 +48,7 @@ def generate_result(root):
 
         canvas = FigureCanvasTkAgg(root.result_frame.histfigure, master=root.result_frame.inner_frame)
         canvas.draw()
-        canvas.get_tk_widget().configure(width=500, height=350)
+        canvas.get_tk_widget().configure(width=500, height=400)
         canvas.get_tk_widget().pack(pady=(80, 20))
 
         skewness = skew(data)
@@ -73,7 +77,8 @@ def generate_result(root):
                 modes_menu.configure(command=lambda e, label=label, k=k, v=v: label.configure(text=f'{k}: {v[float(e)]}'))
                 label.pack(anchor='w', padx=20)
             else:
-                label = ctk.CTkLabel(skew_frame, text=f'{k.title()}:   {v}', font=label_font)
+                val = 'No Modal' if isinstance(v, dict) and not v else v
+                label = ctk.CTkLabel(skew_frame, text=f'{k.title()}:   {val}', font=label_font)
                 label.pack(anchor='w', padx=20, pady=2)
         
 
