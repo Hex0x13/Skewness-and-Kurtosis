@@ -1,6 +1,5 @@
 from typing import Optional, Tuple, Union
 import customtkinter as ctk
-from CTkMessagebox import CTkMessagebox
 import matplotlib.pyplot as plt
 from data import DataScreen
 from result import *
