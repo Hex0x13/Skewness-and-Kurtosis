@@ -12,17 +12,11 @@ class App(ctk.CTk):
         self.geometry('1000x620')
         self.title('Skewness and Kurtosis Calculator')
 
-        pack_screen = {
-            'expand': True,
-            'fill': 'both',
-            'side': ctk.LEFT
-        }
-
-        self.data_frame = DataScreen(self)
+        self.data_frame = DataScreen(self, fg_color='transparent')
         self.result_frame = ResultScreen(self)
 
-        self.data_frame.pack(**pack_screen)
-        self.result_frame.pack(**pack_screen)
+        self.data_frame.place(relx=0.05, rely=0, relwidth=0.4, relheight=1)
+        self.result_frame.place(relx=0.5, rely=0, relwidth=0.5, relheight=1)
 
         self.data_frame.result_btn.configure(command=lambda: generate_result(self))
         self.data_frame.clear_btn.configure(command=lambda: clear_input(self))

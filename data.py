@@ -36,8 +36,8 @@ class DataScreen(ctk.CTkFrame):
         self.button_frame = ctk.CTkFrame(self.input_frame, **button_frame_style)
         self.button_frame.pack(fill='x')
 
-        self.clear_btn = ctk.CTkButton(self.button_frame, text='Clear')
-        self.clear_btn.pack(side=ctk.LEFT)
+        self.clear_btn = ctk.CTkButton(self.button_frame, text='Clear', width=90)
+        self.clear_btn.pack(side=ctk.LEFT, padx=10)
 
         self.result_btn = ctk.CTkButton(self.button_frame, text='Generate Result')
         self.result_btn.pack(side=ctk.RIGHT, padx=10, pady=10)

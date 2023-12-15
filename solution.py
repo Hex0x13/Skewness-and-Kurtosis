@@ -65,7 +65,7 @@ def measure_of_dispersion(data):
 
 
 def skew(data):
-    result = {'sk1': {}}
+    result = {'Sk₁': {}}
     modes = statistics.multimode(data)
     if len(modes) == len(set(data)):
         modes = []
@@ -74,23 +74,23 @@ def skew(data):
     N = len(data)
 
     for mode in modes:
-        result['sk1'][mode] = (mean - mode) / stddev
+        result['Sk₁'][mode] = (mean - mode) / stddev
 
-    result['sk2'] = (3 * (mean - np.median(data))) / stddev
-    result['moment-base'] = (N / ((N - 1) * (N - 2))) * (np.sum((data - mean) ** 3) / stddev ** 3)
+    result['Sk₂'] = (3 * (mean - np.median(data))) / stddev
+    result['moment-based'] = (N / ((N - 1) * (N - 2))) * (np.sum((data - mean) ** 3) / stddev ** 3)
 
-    if result['moment-base'] == 0:
+    if result['moment-based'] == 0:
         result['interpretation'] = 'Symmentric Distribution'
-    elif result['moment-base'] < 0:
-        result['interpretation'] = 'Negatively Skewed Distribution\n(Skewed to the left)'
-    elif result['moment-base'] > 0:
-        result['interpretation'] = 'Possitively Skewed Distribution\n(Skewed to the right)'
+    elif result['moment-based'] < 0:
+        result['interpretation'] = 'Negatively Skewed Distribution (Skewed to the left)'
+    elif result['moment-based'] > 0:
+        result['interpretation'] = 'Possitively Skewed Distribution (Skewed to the right)'
     
-    if result['moment-base'] == 0:
+    if result['moment-based'] == 0:
         result['degree of skewness'] = 'Symmetric'
-    elif result['moment-base'] >= -0.5 and result['moment-base'] <= 0.5:
+    elif result['moment-based'] >= -0.5 and result['moment-based'] <= 0.5:
         result['degree of skewness'] = 'Approximately Symmetric'
-    elif result['moment-base'] >= -1.0 and result['moment-base'] <= 1.0:
+    elif result['moment-based'] >= -1.0 and result['moment-based'] <= 1.0:
         result['degree of skewness'] = 'Moderately Skewed'
     else:
         result['degree of skewness'] = 'Highly Skewed'
@@ -104,13 +104,13 @@ def kurt(data):
     result = {}
     m2 = (N * np.sum(data ** 2) - np.sum(data) ** 2) / N ** 2
     m4 = (np.sum(data ** 4) / N) - 4 * mean * (np.sum(data ** 3) / N) + 6 * mean ** 2 * (np.sum(data ** 2) / N) - 3 * mean ** 4
-    result['kurt1'] = m4 / m2 ** 2
-    result['kurt2'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * (result['kurt1'] - ((3 * (N - 1) / (N + 1))))
-    if result['kurt1'] < 3 or result['kurt2'] < 0:
+    result['Kurt₁'] = m4 / m2 ** 2
+    result['Kurt₂'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * (result['Kurt₁'] - ((3 * (N - 1) / (N + 1))))
+    if result['Kurt₁'] < 3 or result['Kurt₂'] < 0:
         result['interpretation'] = 'platykurtic'
-    elif result['kurt1'] > 3 or result['kurt2'] > 0:
+    elif result['Kurt₁'] > 3 or result['Kurt₂'] > 0:
         result['interpretation'] = 'leptokurtic'
-    elif result['kurt1'] == 3 or result['kurt2'] == 0:
+    elif result['Kurt₁'] == 3 or result['Kurt₂'] == 0:
         result['interpretation'] = 'mesokurtic'
     return result
 
