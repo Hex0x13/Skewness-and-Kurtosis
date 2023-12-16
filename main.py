@@ -17,7 +17,8 @@ class App(ctk.CTk):
         self.data_frame.place(relx=0.05, rely=0, relwidth=0.4, relheight=1)
         self.result_frame.place(relx=0.5, rely=0, relwidth=0.5, relheight=1)
 
-        self.data_frame.result_btn.configure(command=lambda: generate_result(self))
+        self.data_frame.result_btn.configure(
+            command=lambda: generate_result(self))
         self.data_frame.clear_btn.configure(command=lambda: clear_input(self))
 
     def close(self):
@@ -25,9 +26,9 @@ class App(ctk.CTk):
             plt.close(self.result_frame.histfigure)
         self.destroy()
         self.quit()
-        
+
 
 if __name__ == '__main__':
     app = App()
-    app.protocol("WM_DELETE_WINDOW",app.close)
+    app.protocol("WM_DELETE_WINDOW", app.close)
     app.mainloop()

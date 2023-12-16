@@ -146,11 +146,11 @@ def kurt(data):
             result['Kurt₂'] = (((N + 1) * (N - 1)) / ((N - 2) * (N - 3))) * \
                 (result['Kurt₁'] - ((3 * (N - 1) / (N + 1))))
 
-            if result['Kurt₁'] < 3 or result['Kurt₂'] < 0:
+            if result['Kurt₂'] < 0:
                 result['interpretation'] = 'platykurtic'
-            elif result['Kurt₁'] > 3 or result['Kurt₂'] > 0:
+            elif result['Kurt₂'] > 0:
                 result['interpretation'] = 'leptokurtic'
-            elif result['Kurt₁'] == 3 or result['Kurt₂'] == 0:
+            elif result['Kurt₂'] == 0:
                 result['interpretation'] = 'mesokurtic'
             return result
         except (ZeroDivisionError, RuntimeWarning):
