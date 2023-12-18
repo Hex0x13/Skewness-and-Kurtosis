@@ -3,6 +3,7 @@ import customtkinter as ctk
 import matplotlib.pyplot as plt
 from data import DataScreen
 from result import *
+import os
 
 
 class App(ctk.CTk):
@@ -11,6 +12,10 @@ class App(ctk.CTk):
         self.geometry('1000x620')
         self.minsize(1000, 620)
         self.title('Skewness and Kurtosis Calculator')
+
+        self.script_directory = os.path.dirname(os.path.realpath(__file__))
+        self.iconpath = os.path.join(self.script_directory, 'icon.ico')
+        self.iconbitmap(self.iconpath)
 
         self.data_frame = DataScreen(self, fg_color='transparent')
         self.result_frame = ResultScreen(self)
