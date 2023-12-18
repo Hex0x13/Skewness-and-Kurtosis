@@ -75,8 +75,20 @@ def generate_result(root):
         result.pack(expand=True, fill='both')
         data = np.array(data)
         display_result(root, result, data)
+
+        ct = central_tendency(data)
+        mol = measure_of_location(data)
+        mod = measure_of_dispersion(data)
+        moment = population_moment(data)
+
         more_info_btn = ctk.CTkButton(root.result_frame.inner_frame, text='More info...', fg_color='transparent', border_width=1, border_color='white', cursor='hand2')
-        more_info_btn.configure(command=lambda: more_info(root))
+        more_info_btn.configure(
+            command=lambda: more_info(root, {
+                'central tendency': ct,
+                'measure of location':  mol,
+                'measure of dispersion': mod,
+                'moment': moment
+        }))
         more_info_btn.pack(side=ctk.BOTTOM, anchor=ctk.SE, padx=10, pady=10)
         root.result_frame.screen_ctrl_btn.lift()
 
@@ -88,13 +100,31 @@ def generate_result(root):
         root.result_frame.set_innerframe_to_default()
 
 
-def more_info(root):
+def more_info(root, calculations):
     top = ctk.CTkToplevel()
-    top.geometry('600x600')
+    top.geometry('600x600+600+50')
     top.title('More Info...')
     top.grab_set()
+    top.resizable(False, False)
     top.protocol("WM_DELETE_WINDOW", lambda: close_top(top))
+    mainframe = ctk.CTkScrollableFrame(top, fg_color='transparent')
+    mainframe.pack(expand=True, fill='both')
+    frame = ctk.CTkFrame(mainframe)
+    frame.pack(expand=True, ipadx=10, ipady=10)
 
+    for k, v in calculations.items():
+        if k != 'moment':
+            title = ctk.CTkLabel(frame, text=k.title(), font=ctk.CTkFont(size=24, weight='bold'))
+            title.pack(anchor=ctk.W, pady=(20, 10), ipadx=10)
+            for key, val in v.items():
+                label = ctk.CTkLabel(frame, text=f"{key}:  {val}", font=ctk.CTkFont(size=14))
+                label.pack(anchor=ctk.W, padx=(30, 10))
+        else:
+            for key in ['skew', 'kurt']:
+                label = ctk.CTkLabel(frame, text=f"Population {key}: {v[key]}", font=ctk.CTkFont(size=14))
+                label.pack(anchor=ctk.W, padx=(30, 10))
+                if (key == 'skew'):
+                    label.pack_configure(pady=(50, 5))
 
 def close_top(window):
     window.grab_release()

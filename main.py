@@ -9,6 +9,7 @@ class App(ctk.CTk):
     def __init__(self, fg_color: str | Tuple[str, str] | None = None, **kwargs):
         super().__init__(fg_color, **kwargs)
         self.geometry('1000x620')
+        self.minsize(1000, 620)
         self.title('Skewness and Kurtosis Calculator')
 
         self.data_frame = DataScreen(self, fg_color='transparent')

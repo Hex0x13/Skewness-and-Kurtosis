@@ -5,11 +5,12 @@ import warnings
 
 
 def central_tendency(data):
+    mode = statistics.multimode(data)
     result = {
         'N': len(data),
         'mean': np.mean(data),
         'median': np.median(data),
-        'mode': statistics.multimode(data)
+        'mode': [] if len(data) == len(set(data)) else mode
     }
     return result
 
@@ -194,7 +195,7 @@ def population_moment(data):
     # (m3) Third standardised moment
     result['skew'] = result['standard']['m3']
     # (m4) Fourth standardised moment
-    result['kurt'] = result['standard']['m4']
+    result['kurt'] = result['standard']['m4'] - 3
     return result
 
 
