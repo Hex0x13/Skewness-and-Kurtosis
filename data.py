@@ -1,7 +1,8 @@
 from typing import Optional, Tuple, Union
 import customtkinter as ctk
-from text_to_array import sanitize_input
+from text_to_array import sanitize_input, resource_path
 from PIL import Image
+import os
 
 
 class DataScreen(ctk.CTkFrame):
@@ -46,8 +47,8 @@ class DataScreen(ctk.CTkFrame):
         self.sanitize_btn = ctk.CTkButton(self.button_frame, text='Sanitize Input', command=lambda: replace_text(self.textbox))
         self.sanitize_btn.pack(side=ctk.RIGHT)
 
-        self.expand_img = ctk.CTkImage(light_image=Image.open('./img/expand.png'), size=(30, 30))
-        self.compress_img = ctk.CTkImage(light_image=Image.open('./img/compress.png'), size=(30, 30))
+        self.expand_img = ctk.CTkImage(light_image=Image.open(resource_path('expand.png')), size=(30, 30))
+        self.compress_img = ctk.CTkImage(light_image=Image.open(resource_path('compress.png')), size=(30, 30))
         self.fullscreen = False
 
         self.screen_ctrl_btn = ctk.CTkButton(self, text='', height=30, width=30, image=self.expand_img, compound='right')

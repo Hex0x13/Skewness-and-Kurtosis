@@ -1,3 +1,5 @@
+import sys
+import os
 
 def textfile_to_farray(path):
     data: str = None
@@ -70,3 +72,12 @@ def text_to_float_array(text: str):
         return [float(x.strip()) for x in array]
     except Exception:
         return None
+
+
+def resource_path(*args):
+    base_path = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+    # try:
+    #     base_path = sys._MEIPASS
+    # except Exception:
+    #     base_path = os.path.abspath('.')
+    return os.path.join(base_path, *args)

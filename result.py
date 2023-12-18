@@ -5,10 +5,10 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 from solution import *
-from text_to_array import text_to_float_array
+from text_to_array import text_to_float_array, resource_path
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image
-
+import os
 
 class ResultScreen(ctk.CTkFrame):
     def __init__(self, master: any, width: int = 200, height: int = 200, corner_radius: int | str | None = None, border_width: int | str | None = None, bg_color: str | Tuple[str, str] = "transparent", fg_color: str | Tuple[str, str] | None = None, border_color: str | Tuple[str, str] | None = None, background_corner_colors: Tuple[str | Tuple[str, str]] | None = None, overwrite_preferred_drawing_method: str | None = None, **kwargs):
@@ -27,8 +27,9 @@ class ResultScreen(ctk.CTkFrame):
             self, text='No Result', fg_color='transparent', font=ctk.CTkFont(size=18, weight='bold'))
         self.inner_frame.pack(expand=True)
     
-        self.expand_img = ctk.CTkImage(light_image=Image.open('./img/expand.png'), size=(30, 30))
-        self.compress_img = ctk.CTkImage(light_image=Image.open('./img/compress.png'), size=(30, 30))
+        self.expand_img = ctk.CTkImage(light_image=Image.open(resource_path('expand.png')), size=(30, 30))
+        self.compress_img = ctk.CTkImage(light_image=Image.open(resource_path('compress.png')), size=(30, 30))
+        
         self.fullscreen = False
 
         self.screen_ctrl_btn = ctk.CTkButton(self, text='', height=30, width=30, image=self.expand_img, compound='right')
