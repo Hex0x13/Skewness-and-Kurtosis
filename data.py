@@ -1,6 +1,7 @@
 from typing import Optional, Tuple, Union
 import customtkinter as ctk
 from text_to_array import sanitize_input
+from PIL import Image
 
 
 class DataScreen(ctk.CTkFrame):
@@ -44,6 +45,32 @@ class DataScreen(ctk.CTkFrame):
 
         self.sanitize_btn = ctk.CTkButton(self.button_frame, text='Sanitize Input', command=lambda: replace_text(self.textbox))
         self.sanitize_btn.pack(side=ctk.RIGHT)
+
+        self.expand_img = ctk.CTkImage(light_image=Image.open('./img/expand.png'), size=(30, 30))
+        self.compress_img = ctk.CTkImage(light_image=Image.open('./img/compress.png'), size=(30, 30))
+        self.fullscreen = False
+
+        self.screen_ctrl_btn = ctk.CTkButton(self, text='', height=30, width=30, image=self.expand_img, compound='right')
+        self.screen_ctrl_btn.configure(command=self.toggle_screen)
+        self.screen_ctrl_btn.place(relx=0.88, rely=0.01)
+        self.screen_ctrl_btn.lift()
+    
+    def toggle_screen(self):
+        if not self.fullscreen:
+            self.expand_screen()
+        else:
+            self.compress_screen()
+        self.fullscreen = not self.fullscreen
+        self.screen_ctrl_btn.lift()
+    
+    def compress_screen(self):
+        self.screen_ctrl_btn.configure(image=self.expand_img)
+        self.place_configure(relx=0.05, rely=0, relwidth=0.4, relheight=1)
+    
+    def expand_screen(self):
+        self.screen_ctrl_btn.configure(image=self.compress_img)
+        self.place_configure(relx=0, rely=0, relheight=1, relwidth=1)
+        self.lift()
 
 
 def replace_text(textbox: ctk.CTkTextbox):
