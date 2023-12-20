@@ -17,8 +17,13 @@ def central_tendency(data):
 
 def percentile(data, p):
     if p < 0 and p > 100:
-        raise Exception
+        return
+    
     n = len(data)
+
+    if n == 1:
+        return data[0]
+    
     k = (n + 1) * (p / 100)
     i = int(k)
     d = k - float(i)
