@@ -28,7 +28,7 @@ def percentile(data, p):
         if len(data) > 1:
             r = (data[i] - data[i - 1]) * d
         else:
-            r = data[i - 1]
+            r = data[i - 1] * d
         return data[i - 1] + r
 
 
